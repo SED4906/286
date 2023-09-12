@@ -1,3 +1,5 @@
+section .text
+
 clear_screen:
 multipush ax, di, cx, es
     set_es 0x18
@@ -32,3 +34,39 @@ multipush ax, bx, dx
     outb 0x3D5, bh
 multipop ax, bx, dx
 ret
+
+endline:
+multipush ax, cx, dx
+mov ax, [screen_offset]
+xor dx,dx
+mov cx, 160
+idiv cx
+sub [screen_offset], dx
+add [screen_offset], cx
+multipop ax, cx, dx
+jmp cursor_reposition
+
+print_hex: ; si
+multipush ax, di, es
+    set_es 0x18
+    mov di, [screen_offset]
+    print_hex_fragment 3
+    print_hex_fragment 2
+    print_hex_fragment 1
+    print_hex_fragment 0
+    mov [screen_offset], di
+multipop ax, di, es
+jmp cursor_reposition
+
+to_hex_digit:
+    add ax, '0'
+    cmp ax, '9'
+    jle .finish
+    add ax, 8
+.finish:
+ret
+
+section .data
+
+screen_offset: dw 0
+text_color: db 0x07
