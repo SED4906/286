@@ -37,12 +37,12 @@ ret
 
 endline:
 multipush ax, cx, dx
-mov ax, [screen_offset]
-xor dx,dx
-mov cx, 160
-idiv cx
-sub [screen_offset], dx
-add [screen_offset], cx
+    mov ax, [screen_offset]
+    zero dx
+    mov cx, 160
+    idiv cx
+    sub [screen_offset], dx
+    add [screen_offset], cx
 multipop ax, cx, dx
 jmp cursor_reposition
 
@@ -62,7 +62,7 @@ to_hex_digit:
     add ax, '0'
     cmp ax, '9'
     jle .finish
-    add ax, 8
+    add ax, 7
 .finish:
 ret
 
