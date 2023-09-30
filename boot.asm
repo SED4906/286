@@ -22,6 +22,9 @@ start:
     ;call set_mode_x ; not yet
     println start_msg
     println kernel_size_msg, kernel_length
+    call pit_init
+    call pic_remap
+    sti
     .wait: hlt
     jmp .wait
 die:

@@ -3,6 +3,11 @@ multipush ax, di, es
     mov es, 0x18
     mov di, [screen_offset]
     .loop:
+        cmp di, 4000
+        jl .fine
+        call clear_screen
+        zero di
+        .fine:
         movsb
         mov al, [text_color]
         stosb
@@ -30,6 +35,10 @@ multipush ax, cx, dx
     idiv cx
     sub [screen_offset], dx
     add [screen_offset], cx
+    cmp word [screen_offset], 4000
+    jl .fine
+    call clear_screen
+    .fine:
 multipop ax, cx, dx
 jmp cursor_reposition
 
@@ -54,14 +63,14 @@ to_hex_digit:
 ret
 
 clear_screen:
-multipush ax, di, es
+multipush ax, cx, di, es
     mov es, 0x18
     zero di
     mov ax, 0x0720
     mov cx, 2000
     rep stosw
     mov word [screen_offset], 0
-multipop ax, di, es
+multipop ax, cx, di, es
 jmp cursor_reposition
 
 

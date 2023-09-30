@@ -32,6 +32,11 @@ macro outb prt,byt {
     out dx, al
 }
 
+macro inb prt {
+    mov dx, prt
+    in al, dx
+}
+
 macro nybble arg, which {
     if which
     shr arg, (which*4)
@@ -49,7 +54,7 @@ macro print_hex_fragment which {
     stosb
 }
 
-macro println [arg] {
+macro print [arg] {
     forward
         mov si, arg
         if defined arg#.size & arg#.size > 0
@@ -58,6 +63,10 @@ macro println [arg] {
         else
             call print_hex
         end if
+}
+
+macro println [arg] {
+    print arg
     common call endline
 }
 
@@ -88,4 +97,11 @@ macro isr_err i {
 isr#i:
     push i
     jmp interrupt_handler
+}
+
+macro pic_eoi irq {
+if irq > 7
+outb 0xA0, 0x20
+end if
+outb 0x20, 0x20
 }
