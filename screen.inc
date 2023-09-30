@@ -1,19 +1,6 @@
-section .text
-
-clear_screen:
-multipush ax, di, cx, es
-    set_es 0x18
-    mov ax, 0x0720
-    xor di, di
-    mov [screen_offset], di
-    mov cx, (80*25)
-    rep stosw
-multipop ax, di, cx, es
-jmp cursor_reposition
-
-print:
+print_string: ; si, cx
 multipush ax, di, es
-    set_es 0x18
+    mov es, 0x18
     mov di, [screen_offset]
     .loop:
         movsb
@@ -48,7 +35,7 @@ jmp cursor_reposition
 
 print_hex: ; si
 multipush ax, di, es
-    set_es 0x18
+    mov es, 0x18
     mov di, [screen_offset]
     print_hex_fragment 3
     print_hex_fragment 2
@@ -66,7 +53,17 @@ to_hex_digit:
 .finish:
 ret
 
-section .data
+clear_screen:
+multipush ax, di, es
+    mov es, 0x18
+    zero di
+    mov ax, 0x0720
+    mov cx, 2000
+    rep stosw
+    mov word [screen_offset], 0
+multipop ax, di, es
+jmp cursor_reposition
+
 
 screen_offset: dw 0
 text_color: db 0x07
